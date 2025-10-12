@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { NavLink } from "react-router-dom";
-import { BtnToggleTheme } from "./ui/buttons/BtnToggleTheme";
+import { BtnToggleTheme } from "../ui//buttons/BtnToggleTheme";
 
 export const Sidebar = () => {
   const links = [

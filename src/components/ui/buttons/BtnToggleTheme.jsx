@@ -1,4 +1,4 @@
-import { useThemeStore } from "../../../../store/ThemeStore";
+import { useThemeStore } from "../../../store/ThemeStore";
 
 export const BtnToggleTheme = () => {
     const {theme,setTheme} = useThemeStore();
