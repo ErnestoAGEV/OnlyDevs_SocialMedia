@@ -1,6 +1,8 @@
 import { Icon } from "@iconify/react";
 import { NavLink } from "react-router-dom";
 import { BtnToggleTheme } from "../ui//buttons/BtnToggleTheme";
+import { BtnLogout } from "../ui/BtnLogout";
+import { BtnNewPost } from "../ui/buttons/BtnNewPost";
 
 export const Sidebar = () => {
   const links = [
@@ -41,9 +43,9 @@ export const Sidebar = () => {
     },
   ];
   return (
-    <div className="h-screen p-2 bg-white dark:bg-bg-dark transition-all duration-300">
+    <div className="h-screen p-2 bg-white dark:bg-bg-dark transition-all duration-300 flex flex-col">
       {/*LOGO*/}
-      <div>ONLYDEVS</div>
+      <div className="h-8 w-8 rounded-full bg-blue-100 text-primary font-bold text-xs flex justify-center items-center m-2">OD</div>
       {/*NAV*/}
       <nav className="flex-1 flex flex-col gap-2 items-center">
         {links.map((item, index) => {
@@ -60,12 +62,14 @@ export const Sidebar = () => {
               }
             >
               <Icon icon={item.icon} width={24} height={24} />
-              <span>{item.label}</span>
+              <span className="hidden sm:block">{item.label}</span>
             </NavLink>
           );
         })}
       </nav>
       <BtnToggleTheme/>
+      <BtnLogout/>
+      <BtnNewPost/>
     </div>
   );
 };
