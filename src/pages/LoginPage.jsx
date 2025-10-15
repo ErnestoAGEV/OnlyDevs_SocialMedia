@@ -1,11 +1,20 @@
 import { Icon } from "@iconify/react";
 import logo from "../assets/logoOnlyDevs.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useGenerarCodigosAleatorios} from "../hooks/GenerarCodigosAleatorios";
+import { useAuthStore } from "../store/AuthStore";
 export const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
+    const {setCredenciales} = useAuthStore();
     const tooglePasswordVisibility = () => {
         setShowPassword(!showPassword)
     };
+
+    useEffect(() => {
+      const response = useGenerarCodigosAleatorios();
+      const correoCompleto = response+"gmail.com";
+      setCredenciales({email:correoCompleto,password:response})
+    },[])
 
   return (
     <main className="h-screen flex w-full">
@@ -38,7 +47,7 @@ export const LoginPage = () => {
                     <input className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00aff0]" placeholder="Email"/>
                 </div>
                 <div className="relative mb-4">
-                    <input className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00aff0]" placeholder="Password"/>
+                    <input className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00aff0]" placeholder="Password" type={showPassword?"text":"password"}/>
                     <button type="button" className="absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 cursor-pointer" onClick={tooglePasswordVisibility}>
                         <Icon icon={showPassword?"mdi:eye-off": "mdi:eye"}/>
                     </button>
