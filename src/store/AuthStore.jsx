@@ -9,6 +9,6 @@ export const useAuthStore = create((set) => ({
             email:p.email,
             password:p.password
         })
-        return data;
+        return data.user
     }
 }));

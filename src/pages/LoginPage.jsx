@@ -1,23 +1,39 @@
 import { Icon } from "@iconify/react";
 import logo from "../assets/logoOnlyDevs.png";
 import { useEffect, useState } from "react";
-import { useGenerarCodigosAleatorios} from "../hooks/GenerarCodigosAleatorios";
+import { useGenerarCodigosAleatorios } from "../hooks/useGenerarCodigosAleatorios";
 import { useAuthStore } from "../store/AuthStore";
+import {useCrearUsuarioYSesionMutate} from "../stack/LoginStack"
+import { Toaster } from "sonner";
+import { useForm } from "react-hook-form";
+
 export const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
-    const {setCredenciales} = useAuthStore();
+    const { setCredenciales } = useAuthStore();
+    const codigo = useGenerarCodigosAleatorios();
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+    
     const tooglePasswordVisibility = () => {
-        setShowPassword(!showPassword)
+        setShowPassword(!showPassword);
     };
 
+    const {handleSubmit} = useForm()
+    const {isPending,mutate} = useCrearUsuarioYSesionMutate()
+    
     useEffect(() => {
-      const response = useGenerarCodigosAleatorios();
-      const correoCompleto = response+"gmail.com";
-      setCredenciales({email:correoCompleto,password:response})
-    },[])
+      if (codigo) {
+        const correoCompleto = `${codigo}@gmail.com`;
+        setCredenciales({ email: correoCompleto, password: codigo });
+        setEmail(correoCompleto);
+        setPassword(codigo);
+      }
+    }, [codigo, setCredenciales]);
+
 
   return (
     <main className="h-screen flex w-full">
+      <Toaster/>
       {/*Lado izquierdo - Banner azul*/}
       <section className=" hidden md:flex md:w-1/2 bg-[#00b0f0]  flex-col justify-center items-center overflow-hidden ">
         <div className="px-8 text-white text-center flex flex-col gap-2">
@@ -42,17 +58,34 @@ export const LoginPage = () => {
             <h1 className="text-2xl font-medium mb-6 text-center">
                 Iniciar sesión <span className="text-[#0091EA]">(modo invitado)</span>
             </h1>
-            <form>
+            <form onSubmit={handleSubmit(mutate)}>
                 <div className="mb-4">
-                    <input className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00aff0]" placeholder="Email"/>
+                    <input 
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00aff0]" 
+                        placeholder="Email"
+                        value={email}
+                    />
                 </div>
                 <div className="relative mb-4">
-                    <input className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00aff0]" placeholder="Password" type={showPassword?"text":"password"}/>
-                    <button type="button" className="absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 cursor-pointer" onClick={tooglePasswordVisibility}>
-                        <Icon icon={showPassword?"mdi:eye-off": "mdi:eye"}/>
+                    <input 
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00aff0]" 
+                        placeholder="Password" 
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                    />
+                    <button 
+                        type="button" 
+                        className="absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 cursor-pointer" 
+                        onClick={tooglePasswordVisibility}
+                    >
+                        <Icon icon={showPassword ? "mdi:eye-off" : "mdi:eye"}/>
                     </button>
                 </div>
-                <button type="submit" className="w-full bg-gray-200 text-gray-500 font-medium py-3 rounded-full hover:bg-[#00AFF0] transition duration-200 cursor-pointer hover:text-white">
+                <button 
+                    type="submit" 
+                    className="w-full bg-gray-200 text-gray-500 font-medium py-3 rounded-full hover:bg-[#00AFF0] transition duration-200 cursor-pointer hover:text-white"
+                    disabled={isPending}
+                >
                     INICIAR SESIÓN
                 </button>
             </form>
