@@ -18,7 +18,8 @@ export const LoginPage = () => {
         setShowPassword(!showPassword);
     };
 
-    const {handleSubmit} = useForm()
+    const {handleSubmit} = useForm();
+
     const {isPending,mutate} = useCrearUsuarioYSesionMutate()
     
     useEffect(() => {

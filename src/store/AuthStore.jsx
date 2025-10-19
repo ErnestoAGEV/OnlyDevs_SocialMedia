@@ -12,3 +12,27 @@ export const useAuthStore = create((set) => ({
         return data.user
     }
 }));
+
+export const useSuscription = create((set) =>{
+    //Inicia el estado
+    const store = {
+        user:null,
+    };
+    //Listener que ejecuta cada que el store se llama
+    supabase.auth.getSession().then(({data:{session}})=> {
+        if(session?.user) {
+            set({user:session.user});
+            console.log("user",session.user);
+        }
+    });
+
+    supabase.auth.onAuthStateChange((_event,session) => {
+        if(session?.user){
+            set({user:session.user});
+            console.log("user",session.user);
+        } else {
+           set({user:null}); 
+        }
+    });
+    return store;
+});
