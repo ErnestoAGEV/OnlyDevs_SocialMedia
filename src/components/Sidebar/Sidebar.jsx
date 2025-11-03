@@ -39,7 +39,7 @@ export const Sidebar = () => {
     {
       label: "Mi Perfil",
       icon: "ic:baseline-account-circle",
-      to: "/miperfil",
+      to: "/mi-perfil",
     },
   ];
   return (
