@@ -10,7 +10,7 @@ export const useImageSelector = () => {
   const [fileType, setFileType] = useState("");
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
-  const { setFile: setFilePost } = usePostStore();
+  const { setFile: setFilePost} = usePostStore();
 
   const openFileSelector = () => {
     fileInputRef.current?.click();
@@ -107,6 +107,7 @@ export const useImageSelector = () => {
 };
 
 export const ImageSelector = () => {
+    const {setStateImage} = usePostStore()
   const {
     //file,
     fileUrl,
@@ -123,7 +124,7 @@ export const ImageSelector = () => {
   } = useImageSelector();
   return (
     <section className="relative w-full max-w-md bg-[#242526] rounded-lg shadow-xl overflow-hidden">
-      <header className="relative h-12 flex items-center justify-center border-b border-gray-700">
+      <header onClick={setStateImage} className="relative h-12 flex items-center justify-center border-b border-gray-700">
         <h2>Agregar fotos/videos</h2>
         <button className="absolute right-4 text-gray-400 hover:text-white transition-colors duration-200">
           <Icon icon="mdi:close" className="text-xl" />

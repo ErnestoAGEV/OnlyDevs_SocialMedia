@@ -4,6 +4,9 @@ import { useState, useRef, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import EmojiPicker from "emoji-picker-react";
 import { ImageSelector } from "../../hooks/useImageSelector";
+import { usePostStore } from "../../store/PostStore";
+import {useInsertarPostMutate} from "../../stack/PostStack"
+import { useForm } from "react-hook-form";
 
 export const FormPost = () => {
   const { dataUsuarioAuth } = useUsuariosStore();
@@ -11,6 +14,10 @@ export const FormPost = () => {
   const textareaRef = useRef(null);
   const pickerRef = useRef(null);
   const [postText, setPostText] = useState("");
+  const {stateImage,setStateImage,setStateForm,file} = usePostStore();
+  const {mutate,isPending} = useInsertarPostMutate()
+  const {handleSubmit,setValue} = useForm()
+  const puedePublicar = postText.trim().length > 0 || file !== null
   const addEmoji = (emojiData) => {
     const emojiChar = emojiData.emoji;
     const textarea = textareaRef.current;
@@ -29,6 +36,7 @@ export const FormPost = () => {
 
   const handleTextChange = (e) => {
     setPostText(e.target.value);
+    setValue("descripcion", e.target.value)
   };
 
   useEffect(() => {
@@ -49,7 +57,7 @@ export const FormPost = () => {
         {/* header */}
         <header className="flex items-center justify-between p-4 border-b border-gray-500/40">
           <h2 className="text-xl font-semibold">Crear publicación</h2>
-          <BtnClose />
+          <BtnClose funcion={setStateForm} />
         </header>
         {/* user info */}
         <main className="p-4 space-y-4">
@@ -62,7 +70,7 @@ export const FormPost = () => {
               <span className="font-medium">{dataUsuarioAuth?.nombre}</span>
             </div>
           </section>
-          <form>
+          <form onSubmit={handleSubmit(() => mutate({descripcion:postText}))}>
             <div className="relative">
               <textarea
                 ref={textareaRef}
@@ -81,9 +89,9 @@ export const FormPost = () => {
                 </div>
               )}
               <div className="mt-4 flex items-center justify-between">
-                <button
+                <button disabled  = {!puedePublicar || isPending}
                   type="submit"
-                  className="py-2 px-4 rounded-lg font-medium bg-primary cursor-pointer"
+                  className={`py-2 px-4 rounded-lg font-medium ${puedePublicar?"bg-primary cursor-pointer":"bg-gray-400 cursor-not-allowed"}`}
                 >
                   Publicar
                 </button>
@@ -97,13 +105,16 @@ export const FormPost = () => {
               </div>
             </div>
           </form>
-          <ImageSelector />
+          {
+            stateImage && <ImageSelector />
+          }
+
         </main>
         <footer className="p-4 border-t border-gray-500/40">
           <div className="flex items-center justify-between p-3 border border-gray-500/40 rounded-lg">
             <span className="text-sm dark:text-white">Agregar Publicación</span>
             <div className="flex space-x-4">
-              <button className="p-1 rounded-full text-black/50 dark:text-white/50 hover:bg-gray-700">
+              <button onClick={setStateImage} className="p-1 rounded-full text-black/50 dark:text-white/50 hover:bg-gray-700">
                 <Icon icon="mdi:image" className="text-2xl" />
               </button>
             </div>
