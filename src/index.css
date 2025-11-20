@@ -5,3 +5,12 @@
     --color-bg-dark: #171717;
     
 }
+
+/* Ocultar scrollbar manteniendo funcionalidad */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

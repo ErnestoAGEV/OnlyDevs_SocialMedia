@@ -1,11 +1,11 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useInfiniteQuery } from "@tanstack/react-query";
 import { usePostStore } from "../store/PostStore";
 import { useFormattedDate } from "../hooks/useFormattedDate";
 import { useUsuariosStore } from "../store/UsuariosStore";
 import { toast } from "sonner";
 
 export const useInsertarPostMutate = () => {
-  const { insertarPost, file } = usePostStore();
+  const { insertarPost, file, setStateForm, setFile } = usePostStore();
   const fechaActual = useFormattedDate();
   const { dataUsuarioAuth } = useUsuariosStore();
   return useMutation({
@@ -30,6 +30,30 @@ export const useInsertarPostMutate = () => {
     },
     onSuccess: () => {
       toast.success("Publicado");
+      setStateForm();
+      setFile(null);
     },
+  });
+};
+export const useMostrarPostQuery = () => {
+  const { dataUsuarioAuth } = useUsuariosStore();
+  const { mostrarPost } = usePostStore();
+  const cant_pagina = 10;
+  return useInfiniteQuery({
+    queryKey: ["mostrar post", { id_usuario: dataUsuarioAuth?.id }],
+    queryFn: async ({ pageParam = 0 }) => {
+      const data = await mostrarPost({
+        id_usuario: dataUsuarioAuth?.id,
+        desde: pageParam,
+        hasta: cant_pagina,
+      });
+      return data;
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage || lastPage.length < cant_pagina) return undefined;
+      return allPages.length * cant_pagina;
+    },
+    initialPageParam: 0,
+    enabled: !!dataUsuarioAuth?.id,
   });
 };
