@@ -1,4 +1,4 @@
-import { useMutation, useInfiniteQuery } from "@tanstack/react-query";
+import { useMutation, useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { usePostStore } from "../store/PostStore";
 import { useFormattedDate } from "../hooks/useFormattedDate";
 import { useUsuariosStore } from "../store/UsuariosStore";
@@ -33,6 +33,53 @@ export const useInsertarPostMutate = () => {
       setStateForm();
       setFile(null);
     },
+  });
+};
+
+export const useLikePostMutate = () => {
+  const { likePost } = usePostStore();
+  const { dataUsuarioAuth } = useUsuariosStore();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: ["like post"],
+    mutationFn: async (item) => {
+      await likePost({ p_post_id: item?.id, p_user_id: dataUsuarioAuth?.id });
+    },
+    onMutate: async (item) => {
+      // Cancelar queries pendientes para evitar sobrescribir nuestra actualización optimista
+      await queryClient.cancelQueries({ queryKey: ["mostrar post"] });
+      
+      // Snapshot del estado anterior
+      const previousData = queryClient.getQueryData(["mostrar post", { id_usuario: dataUsuarioAuth?.id }]);
+      
+      // Actualización optimista
+      queryClient.setQueryData(["mostrar post", { id_usuario: dataUsuarioAuth?.id }], (old) => {
+        if (!old?.pages) return old;
+        return {
+          ...old,
+          pages: old.pages.map(page => 
+            page.map(post => 
+              post.id === item.id 
+                ? { 
+                    ...post, 
+                    like_usuario_actual: !post.like_usuario_actual,
+                    likes: post.like_usuario_actual ? post.likes - 1 : post.likes + 1
+                  }
+                : post
+            )
+          )
+        };
+      });
+      
+      return { previousData };
+    },
+    onError: (error, item, context) => {
+      // Revertir en caso de error
+      if (context?.previousData) {
+        queryClient.setQueryData(["mostrar post", { id_usuario: dataUsuarioAuth?.id }], context.previousData);
+      }
+      toast.error("Error al dar like: " + error.message);
+    }
   });
 };
 export const useMostrarPostQuery = () => {

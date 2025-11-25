@@ -8,6 +8,7 @@ import { Toaster } from "sonner";
 import { useMostrarPostQuery } from "../stack/PostStack";
 import { useEffect, useRef } from "react";
 import { SpinnerLocal } from "../components/ui/spinners/SpinnerLocal";
+import { useSupabaseSuscription } from "../hooks/useSupabaseSubscription"
 
 export const HomePage = () => {
   const { stateForm } = usePostStore();
@@ -36,12 +37,18 @@ export const HomePage = () => {
     }
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
+  useSupabaseSuscription({
+    channelName:"public:publicaciones",
+    options:{event:"INSERT",schema:"public",table:"publicaciones"},
+    queryKey:["mostrar post"]
+  })
+
   return (
     <main className="flex min-h-screen bg-white dark:bg-bg-dark max-w-[1200px] mx-auto ">
       <Toaster position="top-left" />
       {stateForm && <FormPost />}
       <section className="flex flex-col w-full h-screen ">
-        <articule className="flex flex-col h-screen overflow-hidden border border-gray-200 border-t-0 border-b-0 dark:border-gray-600">
+        <article className="flex flex-col h-screen overflow-hidden border border-gray-200 border-t-0 border-b-0 dark:border-gray-600">
           <HeaderSticky />
 
           <div ref={scrollRef} className="overflow-y-auto scrollbar-hide">
@@ -56,8 +63,8 @@ export const HomePage = () => {
             }
             
           </div>
-        </articule>
-        <articule>Sidebar derecho</articule>
+        </article>
+        <article>Sidebar derecho</article>
       </section>
     </main>
   );

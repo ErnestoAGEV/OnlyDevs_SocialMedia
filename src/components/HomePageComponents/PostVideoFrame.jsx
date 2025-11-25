@@ -4,7 +4,26 @@ import { FastAverageColor } from "fast-average-color";
 export const PostVideoFrame = ({ src }) => {
   const videoRef = useRef(null);
   const [bgColor, setBgColor] = useState("#e5e7eb");
+  const containterRef = useRef(null);
   //Observar si esta en pantalla y poder reproducir
+  useEffect(() => {
+    const Observer = new IntersectionObserver(
+      ([entry]) => {
+        const video = videoRef.current;
+        if (!video) return;
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.4 }
+    );
+    if (containterRef.current) Observer.observe(containterRef.current);
+    return () => {
+      if (containterRef.current) Observer.unobserve(containterRef.current);
+    };
+  }, []);
 
   //Capturamos el color del 1 frame
   useEffect(() => {
@@ -32,13 +51,14 @@ export const PostVideoFrame = ({ src }) => {
     };
     const onLoaded = () => {
       captureFrame();
-    }
-    video.addEventListener("loadeddata", onLoaded)
-    return () => video.removeEventListener("loadeddata",onLoaded)
+    };
+    video.addEventListener("loadeddata", onLoaded);
+    return () => video.removeEventListener("loadeddata", onLoaded);
   }, [src]);
 
   return (
     <div
+      ref={containterRef}
       className="rounded-lg overflow-hidden flex items-center justify-center max-h-[500px]"
       style={{ backgroundColor: bgColor }}
     >
