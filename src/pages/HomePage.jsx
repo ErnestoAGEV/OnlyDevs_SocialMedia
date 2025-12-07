@@ -8,10 +8,13 @@ import { Toaster } from "sonner";
 import { useMostrarPostQuery } from "../stack/PostStack";
 import { useEffect, useRef } from "react";
 import { SpinnerLocal } from "../components/ui/spinners/SpinnerLocal";
-import { useSupabaseSuscription } from "../hooks/useSupabaseSubscription"
+import { useSupabaseSuscription } from "../hooks/useSupabaseSubscription";
+import { ComentarioModal } from "../components/HomePageComponents/ComentarioModal";
+import { useComentariosStore } from "../store/ComentariosStore";
 
 export const HomePage = () => {
   const { stateForm } = usePostStore();
+  const { showModal } = useComentariosStore();
   const {
     data: dataPost,
     fetchNextPage,
@@ -38,10 +41,10 @@ export const HomePage = () => {
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   useSupabaseSuscription({
-    channelName:"public:publicaciones",
-    options:{event:"INSERT",schema:"public",table:"publicaciones"},
-    queryKey:["mostrar post"]
-  })
+    channelName: "public:publicaciones",
+    options: { event: "INSERT", schema: "public", table: "publicaciones" },
+    queryKey: ["mostrar post"],
+  });
 
   return (
     <main className="flex min-h-screen bg-white dark:bg-bg-dark max-w-[1200px] mx-auto ">
@@ -58,14 +61,13 @@ export const HomePage = () => {
                 <PublicacionCard key={`${pageIndex}-${index}`} item={item} />
               ))
             )}
-            {
-              isFetchingNextPage && <SpinnerLocal/>
-            }
-            
+            {isFetchingNextPage && <SpinnerLocal />}
           </div>
         </article>
         <article>Sidebar derecho</article>
       </section>
+
+      {showModal && <ComentarioModal />}
     </main>
   );
 };

@@ -2,9 +2,13 @@ import { Icon } from "@iconify/react";
 import { PostImageFrame } from "./PostImageFrame";
 import { PostVideoFrame } from "./PostVideoFrame";
 import { useLikePostMutate } from "../../stack/PostStack";
+import { usePostStore } from "../../store/PostStore";
+import { useComentariosStore } from "../../store/ComentariosStore";
 
 export const PublicacionCard = ({ item }) => {
-  const { mutate } = useLikePostMutate();
+  const { setItemSelect } = usePostStore();
+  const {mutate} = useLikePostMutate();
+  const {setShowModal} = useComentariosStore()
   return (
     <div className="border-b border-gray-500/50 p-4">
       <div className="flex justify-between">
@@ -52,13 +56,22 @@ export const PublicacionCard = ({ item }) => {
               } `}
             />
           </button>
-          <button className="flex items-center gap-2 cursor-pointer">
+          <button className="flex items-center gap-2 cursor-pointer" onClick={() => {
+            setItemSelect(item)
+            setShowModal()
+          }}>
             <Icon
               icon={"mdi:comment-outline"}
               className="text-3xl p-1 rounded-full text-gray-400 cursor-pointer"
             />
             <span className="text-xs md:text-sm text-gray-400">Comentar</span>
           </button>
+        </div>
+        <div className="flex gap-4 mt-1">
+          {item?.likes > 0 && <span className="text-xs text-gray-400">{item?.likes} me gusta</span>}
+          {
+            item?.comentarios_count > 0 && (<span className="text-xs text-gray-400 cursor-pointer hover:underline">{item?.comentarios_count} comentarios</span>)
+          }
         </div>
       </div>
     </div>

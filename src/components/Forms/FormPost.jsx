@@ -18,6 +18,7 @@ export const FormPost = () => {
   const {mutate,isPending} = useInsertarPostMutate()
   const {handleSubmit,setValue} = useForm()
   const puedePublicar = postText.trim().length > 0 || file !== null
+  
   const addEmoji = (emojiData) => {
     const emojiChar = emojiData.emoji;
     const textarea = textareaRef.current;
