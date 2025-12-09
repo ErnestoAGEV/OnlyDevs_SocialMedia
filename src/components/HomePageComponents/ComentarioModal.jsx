@@ -1,16 +1,26 @@
 import { Icon } from "@iconify/react";
 import { BtnClose } from "../ui/buttons/BtnClose";
-import { useInsertarComentarioMutate } from "../../stack/ComentariosStack";
+import {
+  useInsertarComentarioMutate,
+  useMostrarComentariosQuery,
+} from "../../stack/ComentariosStack";
 import { useEffect, useRef, useState } from "react";
 import EmojiPicker from "emoji-picker-react";
 import { useComentariosStore } from "../../store/ComentariosStore";
+import { useUsuariosStore } from "../../store/UsuariosStore";
+import { usePostStore } from "../../store/PostStore";
+import { SpinnerLocal } from "../ui/spinners/SpinnerLocal";
 
-export const ComentarioModal = ({ item, onClose }) => {
+export const ComentarioModal = () => {
   const [comentario, setComentario] = useState("");
+  const { itemSelect: item } = usePostStore();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const pickerRef = useRef(null);
   const textComentarioRef = useRef(null);
-  const {setShowModal} = useComentariosStore()
+  const { setShowModal } = useComentariosStore();
+  const { data: dataComentarios, isLoading: isLoadingComentarios } =
+    useMostrarComentariosQuery();
+  const { dataUsuarioAuth } = useUsuariosStore();
   const { mutate: comentarioMutate } = useInsertarComentarioMutate({
     comentario: comentario,
     setComentario: setComentario,
@@ -33,14 +43,14 @@ export const ComentarioModal = ({ item, onClose }) => {
   };
 
   useEffect(() => {
-      const handleClickOutside = (e) => {
-        if (pickerRef.current && !pickerRef.current.contains(e.target)) {
-          setShowEmojiPicker(false);
-        }
-      };
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
+    const handleClickOutside = (e) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target)) {
+        setShowEmojiPicker(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <main className="fixed inset-0 z-100 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
@@ -48,33 +58,43 @@ export const ComentarioModal = ({ item, onClose }) => {
         <header className="h-25 sticky p-4 border-b border-gray-400/20">
           <div className="flex items-center gap-3 text-black dark:text-white">
             <img
-              src="https://i.pinimg.com/474x/ec/b7/25/ecb7251110f4bed4969e90b07d9f4183.jpg"
+              src={item?.foto_perfil}
               className="w-12 h-12 rounded-full object-cover"
             />
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-bold lg:max-w-none lg:overflow-visible md:text-ellipsis max-w-[200px] truncate whitespace-nowrap overflow-hidden">
-                  Nombre Usuario
+                  {item?.nombre_usuario}
                 </span>
               </div>
             </div>
           </div>
-          <span>Descripción</span>
+          <span>{item?.descripcion}</span>
           <BtnClose funcion={setShowModal} />
         </header>
         <section className="p-4 overflow-y-auto flex-1">
-          <p>Sin Comentarios</p>
+          {isLoadingComentarios ? (
+            <SpinnerLocal />
+          ) : (
+            dataComentarios?.lenght > 0 &&
+            dataComentarios.map((item, index) => {
+              return <div>
+                
+              </div>;
+            })
+          )}
         </section>
         <footer className="flex items-center gap-2 p-4 bg-white dark:bg-neutral-900">
           <section className="w-full gap-2 flex flex-col">
             <section className="flex w-full gap-4">
               <img
-                src="https://i.pinimg.com/474x/ec/b7/25/ecb7251110f4bed4969e90b07d9f4183.jpg"
+                src={dataUsuarioAuth?.foto_perfil}
                 className="w-10 h-10 rounded-full object-cover"
                 alt="avatar"
               />
 
-              <input ref={textComentarioRef}
+              <input
+                ref={textComentarioRef}
                 placeholder="Escribe un comentario..."
                 value={comentario}
                 onChange={(e) => setComentario(e.target.value)}
@@ -90,7 +110,11 @@ export const ComentarioModal = ({ item, onClose }) => {
                 </div>
               )}
               <button className="text-gray-500 hover:text-gray-700 relative">
-                <Icon icon="mdi:emoticon-outline" className="text-xl" onClick={() => setShowEmojiPicker(!showEmojiPicker)} />
+                <Icon
+                  icon="mdi:emoticon-outline"
+                  className="text-xl"
+                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                />
               </button>
             </section>
             <section className="flex justify-end">

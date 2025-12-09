@@ -69,11 +69,16 @@ export const usePostStore = create((set) => ({
     const { data, error } = await supabase
       .rpc("publicaciones_con_detalles", {
         _id_usuario: p.id_usuario,
-      })
-      .range(p.desde, p.desde + p.hasta - 1);
+        _offset: p.desde,
+        _limit: p.hasta
+      });
+    
     if (error) {
+      console.error("Error en mostrarPost:", error);
       throw new Error(error.message);
     }
+    console.log("🔍 mostrarPost RPC response:", data);
+    console.log("🔍 First item:", data?.[0]);
     set({ dataPost: data });
     return data;
   },

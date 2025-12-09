@@ -13,7 +13,7 @@ import { ComentarioModal } from "../components/HomePageComponents/ComentarioModa
 import { useComentariosStore } from "../store/ComentariosStore";
 
 export const HomePage = () => {
-  const { stateForm } = usePostStore();
+  const { stateForm, setStateForm, itemSelect } = usePostStore();
   const { showModal } = useComentariosStore();
   const {
     data: dataPost,
@@ -43,6 +43,13 @@ export const HomePage = () => {
   useSupabaseSuscription({
     channelName: "public:publicaciones",
     options: { event: "INSERT", schema: "public", table: "publicaciones" },
+    queryKey: ["mostrar post"],
+  });
+
+  // Subscription for comments to update counts
+  useSupabaseSuscription({
+    channelName: "public:comentarios",
+    options: { event: "INSERT", schema: "public", table: "comentarios" },
     queryKey: ["mostrar post"],
   });
 

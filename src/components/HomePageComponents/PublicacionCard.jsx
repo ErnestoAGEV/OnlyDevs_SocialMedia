@@ -9,6 +9,7 @@ export const PublicacionCard = ({ item }) => {
   const { setItemSelect } = usePostStore();
   const {mutate} = useLikePostMutate();
   const {setShowModal} = useComentariosStore()
+  
   return (
     <div className="border-b border-gray-500/50 p-4">
       <div className="flex justify-between">

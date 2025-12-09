@@ -6,7 +6,14 @@ export const useSupabaseSuscription = ({ channelName, options, queryKey }) => {
   const queryClient = useQueryClient();
   useEffect(() => {
     const subscription = supabase.channel(channelName).on("postgres_changes",options,(payload) => {
-        const {eventType} = payload
+        const {eventType, table} = payload
+        
+        // Para comentarios, hacer reset completo para actualizar contadores
+        if(table === "comentarios" && eventType === "INSERT") {
+            queryClient.resetQueries({ queryKey, exact: false });
+            return;
+        }
+        
         if(["INSERT","DELETE"].includes(eventType)) {
             // Solo invalida en INSERT y DELETE, no en UPDATE (likes)
             queryClient.invalidateQueries(queryKey);
