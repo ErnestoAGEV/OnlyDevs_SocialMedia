@@ -1,4 +1,6 @@
 import { useRelativeTime } from "../../hooks/useRelativeTime";
+import { useMostrarRespuestaComentariosQuery } from "../../stack/RespuestasComentariosStack";
+import { useComentariosStore } from "../../store/ComentariosStore";
 import { useRespuestasComentariosStore } from "../../store/RespuestasComentariosStore";
 import { InputRespuestaComentario } from "./InputRespuestaComentario";
 
@@ -8,9 +10,10 @@ export const ComentarioCard = ({ item }) => {
     limpiarRespuestaActiva,
     setRespuestaActiva,
   } = useRespuestasComentariosStore();
+  const {setItemSelect} = useComentariosStore()
+  
   return (
     <div className="pl-4">
-      <span>ComentarioCard</span>
       <div className="flex items-start gap-2 group relative w-full">
         <img
           src={item?.foto_usuario}
@@ -41,7 +44,7 @@ export const ComentarioCard = ({ item }) => {
             </button>
           </div>
           {item?.respuestas_count > 0 && (
-            <button className="text-gray-400 mt-2">
+            <button className="text-gray-400 my-2 text-xs hover:underline cursor-pointer" onClick={() => setItemSelect(item)}>
               {item?.respuestas_count === 1
                 ? `Ver ${item?.respuestas_count} respuesta`
                 : `Ver las ${item?.respuestas_count} respuestas`}

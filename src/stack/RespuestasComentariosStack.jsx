@@ -1,23 +1,22 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRespuestasComentariosStore } from "../store/RespuestasComentariosStore";
 import { useFormattedDate } from "../hooks/useFormattedDate";
 import { useUsuariosStore } from "../store/UsuariosStore";
 import { toast } from "sonner";
+import { useComentariosStore } from "../store/ComentariosStore";
 
-export const useInsertarRespuestasComentariosMutate = () => {
+export const useInsertarRespuestasComentariosMutate = (p) => {
   const {
     insertarRespuestaComentarios,
     respuestaActivaParaComentarioId,
-    respuesta,
-    setRespuesta,
   } = useRespuestasComentariosStore();
   const { dataUsuarioAuth } = useUsuariosStore();
   const fechaActual = useFormattedDate();
   return useMutation({
     mutationKey: ["insertar respuesta a comentario"],
-    mutationFn: insertarRespuestaComentarios({
+    mutationFn: () => insertarRespuestaComentarios({
       id_comentario: respuestaActivaParaComentarioId,
-      comentario: respuesta,
+      comentario: p.respuesta,
       fecha: fechaActual,
       id_usuario: dataUsuarioAuth?.id,
     }),
@@ -26,7 +25,17 @@ export const useInsertarRespuestasComentariosMutate = () => {
     },
     onSuccess: () => {
       toast.success("Respuesta enviada");
-      setRespuesta("");
+      p.setRespuesta("");
     },
+  });
+};
+
+export const useMostrarRespuestaComentariosQuery = () => {
+  const { mostrarRespuestaAComentarios } = useRespuestasComentariosStore();
+  const { itemSelect } = useComentariosStore();
+  return useQuery({
+    queryKey: ["mostrar respuesta comentarios", { id_comentario: itemSelect?.id }],
+    queryFn: () => mostrarRespuestaAComentarios({ 
+      id_comentario: itemSelect?.id }),enabled:!!itemSelect,
   });
 };
