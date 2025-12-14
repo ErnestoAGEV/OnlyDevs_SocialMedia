@@ -49,8 +49,8 @@ export const HomePage = () => {
   // Subscription for comments to update counts
   useSupabaseSuscription({
     channelName: "public:comentarios",
-    options: { event: "INSERT", schema: "public", table: "comentarios" },
-    queryKey: ["mostrar post"],
+    options: { event: "*", schema: "public", table: "comentarios" },
+    queryKey: ["mostrar comentarios"],
   });
 
   return (

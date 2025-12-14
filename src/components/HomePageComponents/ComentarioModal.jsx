@@ -10,6 +10,7 @@ import { useComentariosStore } from "../../store/ComentariosStore";
 import { useUsuariosStore } from "../../store/UsuariosStore";
 import { usePostStore } from "../../store/PostStore";
 import { SpinnerLocal } from "../ui/spinners/SpinnerLocal";
+import { ComentarioCard } from "./ComentarioCard";
 
 export const ComentarioModal = () => {
   const [comentario, setComentario] = useState("");
@@ -72,15 +73,15 @@ export const ComentarioModal = () => {
           <span>{item?.descripcion}</span>
           <BtnClose funcion={setShowModal} />
         </header>
-        <section className="p-4 overflow-y-auto flex-1">
+        <section className="p-4 overflow-y-auto flex-1 scrollbar-hide">
           {isLoadingComentarios ? (
             <SpinnerLocal />
           ) : (
-            dataComentarios?.lenght > 0 &&
+            dataComentarios?.length > 0 &&
             dataComentarios.map((item, index) => {
-              return <div>
-                
-              </div>;
+              return (
+                <ComentarioCard item={item} key={index}/>
+              );
             })
           )}
         </section>

@@ -23,16 +23,13 @@ export const useInsertarComentarioMutate = (p) => {
     onError: (error) => {
       toast.error("Error al comentar post: " + error.message);
     },
-    onSuccess: async () => {
+    onSuccess: () => {
       p.setComentario("");
-      setShowModal();
       toast.success("Comentario agregado");
-
-      // Remover completamente el cache y refetch
-      queryClient.removeQueries({ queryKey: ["mostrar post"] });
-      await queryClient.refetchQueries({
-        queryKey: ["mostrar post"],
-        type: "active",
+      
+      // Invalidar solo la query de comentarios para actualizar la lista
+      queryClient.invalidateQueries({ 
+        queryKey: ["mostrar comentarios", { _id_publicacion: itemSelect?.id }] 
       });
     },
   });
