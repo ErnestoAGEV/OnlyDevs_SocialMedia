@@ -1,17 +1,19 @@
 import { useRelativeTime } from "../../hooks/useRelativeTime";
-import { useMostrarRespuestaComentariosQuery } from "../../stack/RespuestasComentariosStack";
 import { useComentariosStore } from "../../store/ComentariosStore";
 import { useRespuestasComentariosStore } from "../../store/RespuestasComentariosStore";
 import { InputRespuestaComentario } from "./InputRespuestaComentario";
+import { RespuestaCard } from "./RespuestaCard";
 
 export const ComentarioCard = ({ item }) => {
   const {
     respuestaActivaParaComentarioId,
     limpiarRespuestaActiva,
     setRespuestaActiva,
+    dataRespuestaComentario,
   } = useRespuestasComentariosStore();
-  const {setItemSelect} = useComentariosStore()
-  
+  const { setItemSelect, itemSelect: itemSelectComentario } =
+    useComentariosStore();
+
   return (
     <div className="pl-4">
       <div className="flex items-start gap-2 group relative w-full">
@@ -44,15 +46,22 @@ export const ComentarioCard = ({ item }) => {
             </button>
           </div>
           {item?.respuestas_count > 0 && (
-            <button className="text-gray-400 my-2 text-xs hover:underline cursor-pointer" onClick={() => setItemSelect(item)}>
+            <button
+              className="text-gray-400 my-2 text-xs hover:underline cursor-pointer"
+              onClick={() => setItemSelect(item)}
+            >
               {item?.respuestas_count === 1
                 ? `Ver ${item?.respuestas_count} respuesta`
                 : `Ver las ${item?.respuestas_count} respuestas`}
             </button>
           )}
+          {itemSelectComentario?.id === item.id &&
+            dataRespuestaComentario?.map((item, index) => {
+              return <RespuestaCard item={item}/>;
+            })}
           {respuestaActivaParaComentarioId === item?.id && (
             <div>
-              <div className="w-4 h-4 border-l-2 border-b-2 border-gray-300 dark:border-gray-600 rounded-bl-[8px] absolute bottom-18 -ml-[29px]"/> 
+              <div className="w-4 h-4 border-l-2 border-b-2 border-gray-300 dark:border-gray-600 rounded-bl-[8px] absolute bottom-18 -ml-[29px]" />
               <InputRespuestaComentario />
             </div>
           )}

@@ -9,6 +9,7 @@ export const useInsertarRespuestasComentariosMutate = (p) => {
   const {
     insertarRespuestaComentarios,
     respuestaActivaParaComentarioId,
+    limpiarRespuestaActiva,
   } = useRespuestasComentariosStore();
   const { dataUsuarioAuth } = useUsuariosStore();
   const fechaActual = useFormattedDate();
@@ -26,6 +27,7 @@ export const useInsertarRespuestasComentariosMutate = (p) => {
     onSuccess: () => {
       toast.success("Respuesta enviada");
       p.setRespuesta("");
+      limpiarRespuestaActiva()
     },
   });
 };

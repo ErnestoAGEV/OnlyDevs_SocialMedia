@@ -10,11 +10,12 @@ export const useRespuestasComentariosStore = create((set) => ({
     set({
       respuestaActivaParaComentarioId: p,
     }),
-    limpiarRespuestaActiva: () => set ({respuestaActivaParaComentarioId:null}),
+  limpiarRespuestaActiva: () => set({ respuestaActivaParaComentarioId: null }),
   insertarRespuestaComentarios: async (p) => {
     const { error } = await supabase.from(tabla).insert(p);
     if (error) throw new Error(error.message);
   },
+  dataRespuestaComentario: null,
   mostrarRespuestaAComentarios: async (p) => {
     const { data, error } = await supabase
       .from(tabla)
@@ -23,6 +24,7 @@ export const useRespuestasComentariosStore = create((set) => ({
     if (error) {
       throw new Error(error.message);
     }
+    set({ dataRespuestaComentario: data });
     return data;
   },
 }));

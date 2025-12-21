@@ -12,11 +12,13 @@ import { useSupabaseSuscription } from "../hooks/useSupabaseSubscription";
 import { ComentarioModal } from "../components/HomePageComponents/ComentarioModal";
 import { useComentariosStore } from "../store/ComentariosStore";
 import { useMostrarRespuestaComentariosQuery } from "../stack/RespuestasComentariosStack";
+import { FormActualizarPerfil } from "../components/Forms/FormActualizarPerfil";
 
 export const HomePage = () => {
   const { stateForm, setStateForm, itemSelect } = usePostStore();
   const { showModal } = useComentariosStore();
-  const {data:dataRespuestaComentario} = useMostrarRespuestaComentariosQuery()
+  const { data: dataRespuestaComentario } =
+    useMostrarRespuestaComentariosQuery();
   const {
     data: dataPost,
     fetchNextPage,
@@ -55,8 +57,18 @@ export const HomePage = () => {
     queryKey: ["mostrar comentarios"],
   });
 
+  // Subscription for comments to update counts
+  useSupabaseSuscription({
+    channelName: "public:respuestas_comentarios",
+    options: { event: "*", schema: "public", table: "respuestas_comentarios" },
+    queryKey: ["mostrar respuesta comentarios"],
+  });
+
   return (
     <main className="flex min-h-screen bg-white dark:bg-bg-dark max-w-[1200px] mx-auto ">
+
+    <FormActualizarPerfil/>
+
       <Toaster position="top-left" />
       {stateForm && <FormPost />}
       <section className="flex flex-col w-full h-screen ">
