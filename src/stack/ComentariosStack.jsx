@@ -27,10 +27,9 @@ export const useInsertarComentarioMutate = (p) => {
       p.setComentario("");
       toast.success("Comentario agregado");
       
-      // Invalidar solo la query de comentarios para actualizar la lista
-      queryClient.invalidateQueries({ 
-        queryKey: ["mostrar comentarios", { _id_publicacion: itemSelect?.id }] 
-      });
+      // Invalidar queries manualmente para actualización inmediata
+      queryClient.invalidateQueries({ queryKey: ["mostrar comentarios"], exact: false });
+      queryClient.invalidateQueries({ queryKey: ["mostrar post"], exact: false });
     },
   });
 };
@@ -41,5 +40,6 @@ export const useMostrarComentariosQuery = () => {
   return useQuery({
     queryKey: ["mostrar comentarios", { _id_publicacion: itemSelect?.id }],
     queryFn: () => mostrarComentarios({ _id_publicacion: itemSelect?.id }),
+    enabled: !!itemSelect?.id,
   });
 };

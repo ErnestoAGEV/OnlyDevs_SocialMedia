@@ -13,9 +13,11 @@ import { ComentarioModal } from "../components/HomePageComponents/ComentarioModa
 import { useComentariosStore } from "../store/ComentariosStore";
 import { useMostrarRespuestaComentariosQuery } from "../stack/RespuestasComentariosStack";
 import { FormActualizarPerfil } from "../components/Forms/FormActualizarPerfil";
+import { useUsuariosStore } from "../store/UsuariosStore";
 
 export const HomePage = () => {
   const { stateForm, setStateForm, itemSelect } = usePostStore();
+  const {dataUsuarioAuth} = useUsuariosStore()
   const { showModal } = useComentariosStore();
   const { data: dataRespuestaComentario } =
     useMostrarRespuestaComentariosQuery();
@@ -50,6 +52,13 @@ export const HomePage = () => {
     queryKey: ["mostrar post"],
   });
 
+  // Subscription for likes to update counts
+  useSupabaseSuscription({
+    channelName: "public:likes",
+    options: { event: "*", schema: "public", table: "likes" },
+    queryKey: ["mostrar post"],
+  });
+
   // Subscription for comments to update counts
   useSupabaseSuscription({
     channelName: "public:comentarios",
@@ -66,8 +75,10 @@ export const HomePage = () => {
 
   return (
     <main className="flex min-h-screen bg-white dark:bg-bg-dark max-w-[1200px] mx-auto ">
-
-    <FormActualizarPerfil/>
+{
+  dataUsuarioAuth?.foto_perfil === "-" && <FormActualizarPerfil/>
+}
+    
 
       <Toaster position="top-left" />
       {stateForm && <FormPost />}

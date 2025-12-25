@@ -59,7 +59,7 @@ export const ComentarioModal = () => {
         <header className="h-25 sticky p-4 border-b border-gray-400/20">
           <div className="flex items-center gap-3 text-black dark:text-white">
             <img
-              src={item?.foto_perfil}
+              src={item?.foto_usuario}
               className="w-12 h-12 rounded-full object-cover"
             />
             <div>

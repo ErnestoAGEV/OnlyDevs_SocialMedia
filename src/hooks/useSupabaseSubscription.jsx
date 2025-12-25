@@ -5,29 +5,39 @@ import { supabase } from "../supabase/supabase.config";
 export const useSupabaseSuscription = ({ channelName, options, queryKey }) => {
   const queryClient = useQueryClient();
   useEffect(() => {
-    const subscription = supabase.channel(channelName).on("postgres_changes",options,(payload) => {
-        const {eventType, table} = payload
+    const subscription = supabase.channel(channelName).on("postgres_changes", options, (payload) => {
+        const { eventType, table } = payload;
+        console.log("🔄 Realtime event:", { eventType, table, queryKey });
         
-        // Para comentarios, hacer reset completo para actualizar contadores
-        if(table === "comentarios" && eventType === "INSERT") {
-            queryClient.resetQueries({ queryKey, exact: false });
+        // Para likes, invalidar posts (para actualizar el contador)
+        if (table === "likes") {
+            queryClient.invalidateQueries({ queryKey: ["mostrar post"], exact: false });
             return;
         }
         
-        if(["INSERT","DELETE"].includes(eventType)) {
-            // Solo invalida en INSERT y DELETE, no en UPDATE (likes)
-            queryClient.invalidateQueries(queryKey);
+        // Para comentarios, invalidar comentarios y posts (para actualizar el contador)
+        if (table === "comentarios") {
+            queryClient.invalidateQueries({ queryKey: ["mostrar comentarios"], exact: false });
+            queryClient.invalidateQueries({ queryKey: ["mostrar post"], exact: false });
+            return;
         }
-        // Para UPDATE, esperar un poco para que el servidor procese
-        if(eventType === "UPDATE") {
-            setTimeout(() => {
-                queryClient.invalidateQueries(queryKey);
-            }, 500);
+
+        // Para respuestas a comentarios
+        if (table === "respuestas_comentarios") {
+            queryClient.invalidateQueries({ queryKey: ["mostrar respuesta comentarios"], exact: false });
+            queryClient.invalidateQueries({ queryKey: ["mostrar comentarios"], exact: false });
+            return;
         }
+        
+        // Para otras tablas (publicaciones, etc.)
+        queryClient.invalidateQueries({ queryKey, exact: false });
     })
-    .subscribe();
+    .subscribe((status) => {
+      console.log("📡 Subscription status:", channelName, status);
+    });
+    
     return () => {
         supabase.removeChannel(subscription);
     }
-  }, [channelName,options,queryKey,queryClient]);
+  }, [channelName, options, queryKey, queryClient]);
 };

@@ -4,6 +4,7 @@ import { PostVideoFrame } from "./PostVideoFrame";
 import { useLikePostMutate } from "../../stack/PostStack";
 import { usePostStore } from "../../store/PostStore";
 import { useComentariosStore } from "../../store/ComentariosStore";
+import { useRelativeTime } from "../../hooks/useRelativeTime";
 
 export const PublicacionCard = ({ item }) => {
   const { setItemSelect } = usePostStore();
@@ -15,14 +16,14 @@ export const PublicacionCard = ({ item }) => {
       <div className="flex justify-between">
         <div className="flex items-center gap-3">
           <img
-            src="https://img.freepik.com/foto-gratis/estilo-vida-emociones-gente-concepto-casual-confiado-agradable-sonriente-mujer-asiatica-brazos-cruzados-pecho-seguro-listo-ayudar-escuchando-companeros-trabajo-participando-conversacion_1258-59335.jpg?semt=ais_hybrid&w=740&q=80"
+            src={item?.foto_usuario}
             className="w-12 h-12 rounded-full object-cover"
           />
-          <span className="font-bold">Nombre de usuario</span>
+          <span className="font-bold">{item?.nombre_usuario}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-gray-500 text-sm whitespace-nowrap">
-            hace 8 horas
+             {useRelativeTime(item?.fecha)}
           </span>
           <button>
             <Icon icon="tabler:dots" width="24" height="24" />
@@ -71,7 +72,10 @@ export const PublicacionCard = ({ item }) => {
         <div className="flex gap-4 mt-1">
           {item?.likes > 0 && <span className="text-xs text-gray-400">{item?.likes} me gusta</span>}
           {
-            item?.comentarios_count > 0 && (<span className="text-xs text-gray-400 cursor-pointer hover:underline">{item?.comentarios_count} comentarios</span>)
+            item?.comentarios_count > 0 && (<span onClick={() => {
+            setItemSelect(item)
+            setShowModal()
+          }} className="text-xs text-gray-400 cursor-pointer hover:underline">{item?.comentarios_count} comentarios</span>)
           }
         </div>
       </div>
