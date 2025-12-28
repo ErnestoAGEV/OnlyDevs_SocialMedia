@@ -81,16 +81,13 @@ export const HomePage = () => {
   });
 
   return (
-    <main className="flex min-h-screen bg-white dark:bg-bg-dark max-w-[1200px] mx-auto ">
-{
-  dataUsuarioAuth?.foto_perfil === "-" && <FormActualizarPerfil/>
-}
-    
+    <main className="flex min-h-screen bg-white dark:bg-bg-dark max-w-[1200px] mx-auto">
+      {dataUsuarioAuth?.foto_perfil === "-" && <FormActualizarPerfil />}
 
-      <Toaster position="top-left" />
+      <Toaster position="top-left" richColors />
       {stateForm && <FormPost />}
-      <section className="flex flex-col w-full h-screen ">
-        <article className="flex flex-col h-screen overflow-hidden border border-gray-200 border-t-0 border-b-0 dark:border-gray-600">
+      <section className="flex flex-col w-full h-screen">
+        <article className="flex flex-col h-screen overflow-hidden">
           <HeaderSticky />
 
           <div ref={scrollRef} className="overflow-y-auto scrollbar-hide">

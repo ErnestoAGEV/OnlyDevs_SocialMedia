@@ -86,5 +86,29 @@ export const usePostStore = create((set) => ({
     const { error } = await supabase.rpc("toggle_like", p);
     if (error) throw new Error(error.message);
   },
+  
+  // Guardar/Quitar guardado de post
+  guardarPost: async (p) => {
+    const { error } = await supabase.rpc("toggle_guardado", p);
+    if (error) throw new Error(error.message);
+  },
+  
+  // Obtener posts que le gustaron al usuario
+  mostrarPostsLiked: async (id_usuario) => {
+    const { data, error } = await supabase.rpc("publicaciones_liked_por_usuario", {
+      _id_usuario: id_usuario
+    });
+    if (error) throw new Error(error.message);
+    return data;
+  },
+  
+  // Obtener posts guardados por el usuario
+  mostrarPostsGuardados: async (id_usuario) => {
+    const { data, error } = await supabase.rpc("publicaciones_guardadas_por_usuario", {
+      _id_usuario: id_usuario
+    });
+    if (error) throw new Error(error.message);
+    return data;
+  },
 
 }));

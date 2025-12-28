@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { useUsuariosStore } from "../store/UsuariosStore";
-import { useMostrarPostQuery } from "../stack/PostStack";
+import { useMostrarPostQuery, useMostrarPostsLikedQuery, useMostrarPostsGuardadosQuery } from "../stack/PostStack";
 import { PublicacionCard } from "../components/HomePageComponents/PublicacionCard";
 import { FormActualizarPerfil } from "../components/Forms/FormActualizarPerfil";
 import { useGlobalStore } from "../store/GlobalStore";
@@ -11,6 +11,8 @@ export const MiPerfilPage = () => {
   const { stateFormPerfil, setStateFormPerfil } = useGlobalStore();
   const [activeTab, setActiveTab] = useState("posts");
   const { data: dataPost } = useMostrarPostQuery();
+  const { data: postsLiked, isLoading: isLoadingLiked } = useMostrarPostsLikedQuery();
+  const { data: postsGuardados, isLoading: isLoadingGuardados } = useMostrarPostsGuardadosQuery();
 
   // Filtrar posts del usuario actual
   const misPosts = dataPost?.pages
@@ -202,26 +204,50 @@ export const MiPerfilPage = () => {
         )}
 
         {activeTab === "likes" && (
-          <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-            <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center mb-4">
-              <Icon icon="mdi:heart-outline" className="text-4xl text-gray-400" />
-            </div>
-            <h3 className="font-bold text-xl mb-2">Aún no hay me gusta</h3>
-            <p className="text-gray-500 text-sm max-w-xs">
-              Las publicaciones que te gusten aparecerán aquí.
-            </p>
+          <div>
+            {isLoadingLiked ? (
+              <div className="flex justify-center py-16">
+                <Icon icon="mdi:loading" className="text-4xl text-primary animate-spin" />
+              </div>
+            ) : postsLiked?.length > 0 ? (
+              postsLiked.map((post) => (
+                <PublicacionCard key={post.id} item={post} />
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+                <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center mb-4">
+                  <Icon icon="mdi:heart-outline" className="text-4xl text-gray-400" />
+                </div>
+                <h3 className="font-bold text-xl mb-2">Aún no hay me gusta</h3>
+                <p className="text-gray-500 text-sm max-w-xs">
+                  Las publicaciones que te gusten aparecerán aquí.
+                </p>
+              </div>
+            )}
           </div>
         )}
 
         {activeTab === "saved" && (
-          <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-            <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center mb-4">
-              <Icon icon="mdi:bookmark-outline" className="text-4xl text-gray-400" />
-            </div>
-            <h3 className="font-bold text-xl mb-2">Aún no hay guardados</h3>
-            <p className="text-gray-500 text-sm max-w-xs">
-              Las publicaciones que guardes aparecerán aquí.
-            </p>
+          <div>
+            {isLoadingGuardados ? (
+              <div className="flex justify-center py-16">
+                <Icon icon="mdi:loading" className="text-4xl text-primary animate-spin" />
+              </div>
+            ) : postsGuardados?.length > 0 ? (
+              postsGuardados.map((post) => (
+                <PublicacionCard key={post.id} item={post} />
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+                <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center mb-4">
+                  <Icon icon="mdi:bookmark-outline" className="text-4xl text-gray-400" />
+                </div>
+                <h3 className="font-bold text-xl mb-2">Aún no hay guardados</h3>
+                <p className="text-gray-500 text-sm max-w-xs">
+                  Las publicaciones que guardes aparecerán aquí.
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>

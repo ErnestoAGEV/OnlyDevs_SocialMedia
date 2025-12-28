@@ -12,10 +12,10 @@ export const MainLayout = () => {
       return <span>error al cargar usuarios...{error.message}</span>;
     }
   return (
-    <main className="flex justify-center h-screen overflow-hidden bg-white dark:bg-bg-dark text-black dark:text-white transition-colors duration-300">
+    <main className="flex justify-center h-screen overflow-hidden bg-gray-50 dark:bg-bg-dark text-black dark:text-white transition-colors duration-300">
       <section className="flex flex-col md:flex-row w-full max-w-[1400px] h-full">
         <LeftPanel />
-        <section className="flex-1 px-2 md:px-4 overflow-y-auto scrollbar-hide h-full pb-20 md:pb-0 border-x border-gray-200 dark:border-gray-800">
+        <section className="flex-1 overflow-y-auto scrollbar-hide h-full pb-20 md:pb-0 bg-white dark:bg-bg-dark md:border-x border-gray-100 dark:border-gray-800/50">
           <Outlet />
         </section>
         <Sidebar />

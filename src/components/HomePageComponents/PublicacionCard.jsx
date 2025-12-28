@@ -1,50 +1,51 @@
 import { Icon } from "@iconify/react";
 import { PostImageFrame } from "./PostImageFrame";
 import { PostVideoFrame } from "./PostVideoFrame";
-import { useLikePostMutate } from "../../stack/PostStack";
+import { useLikePostMutate, useGuardarPostMutate } from "../../stack/PostStack";
 import { usePostStore } from "../../store/PostStore";
 import { useComentariosStore } from "../../store/ComentariosStore";
 import { useRelativeTime } from "../../hooks/useRelativeTime";
 
 export const PublicacionCard = ({ item }) => {
   const { setItemSelect } = usePostStore();
-  const {mutate} = useLikePostMutate();
-  const {setShowModal} = useComentariosStore()
+  const { mutate: mutateLike } = useLikePostMutate();
+  const { mutate: mutateGuardar } = useGuardarPostMutate();
+  const { setShowModal } = useComentariosStore();
   
   return (
-    <div className="border-b border-gray-500/50 p-3 md:p-4">
+    <div className="border-b border-gray-100 dark:border-gray-800/50 p-4 md:p-5 hover:bg-gray-50/50 dark:hover:bg-neutral-900/30 transition-colors">
       <div className="flex justify-between">
-        <div className="flex items-center gap-2 md:gap-3">
+        <div className="flex items-center gap-3">
           <img
             src={item?.foto_usuario}
-            className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover"
+            className="w-11 h-11 md:w-12 md:h-12 rounded-full object-cover ring-2 ring-gray-100 dark:ring-gray-800"
           />
-          <span className="font-bold text-sm md:text-base truncate max-w-[120px] md:max-w-none">{item?.nombre_usuario}</span>
+          <div className="flex flex-col">
+            <span className="font-bold text-sm md:text-base truncate max-w-[150px] md:max-w-none hover:text-primary cursor-pointer transition-colors">{item?.nombre_usuario}</span>
+            <span className="text-gray-400 text-xs">
+              {useRelativeTime(item?.fecha)}
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-gray-500 text-sm whitespace-nowrap">
-             {useRelativeTime(item?.fecha)}
-          </span>
-          <button>
-            <Icon icon="tabler:dots" width="24" height="24" />
-          </button>
-        </div>
+        <button className="p-2 h-fit rounded-full hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors text-gray-400 hover:text-gray-600">
+          <Icon icon="mdi:dots-horizontal" className="text-xl" />
+        </button>
       </div>
 
-      <div className="mt-3">
-        <p className="mb-2 ">{item?.descripcion}</p>
+      <div className="mt-3 ml-14 md:ml-15">
+        <p className="mb-3 text-gray-800 dark:text-gray-200 leading-relaxed">{item?.descripcion}</p>
         <div>
           {item?.url !== "-" &&
             (item?.type === "imagen" ? (
               <PostImageFrame src={item?.url} />
             ) : item?.type === "gif" ? (
-              <div className="rounded-lg overflow-hidden relative">
+              <div className="rounded-2xl overflow-hidden relative border border-gray-100 dark:border-gray-800">
                 <img 
                   src={item?.url} 
                   alt="GIF" 
-                  className="w-full max-h-[300px] md:max-h-[400px] object-contain bg-black"
+                  className="w-full max-h-[300px] md:max-h-[400px] object-contain bg-gray-900"
                 />
-                <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/60 rounded text-xs text-white">
+                <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/70 backdrop-blur-sm rounded-md text-xs text-white font-medium">
                   GIF
                 </div>
               </div>
@@ -52,42 +53,54 @@ export const PublicacionCard = ({ item }) => {
               <PostVideoFrame src={item?.url} />
             ))}
         </div>
-        <div className="flex justify-between mt-3 md:mt-4">
+        <div className="flex items-center gap-1 mt-4">
           <button
-            onClick={() => {
-              mutate(item);
-            }}
+            onClick={() => mutateLike(item)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all ${
+              item?.like_usuario_actual
+                ? "text-pink-500 bg-pink-50 dark:bg-pink-500/10"
+                : "text-gray-400 hover:text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-500/10"
+            }`}
           >
             <Icon
-              icon={
-                item?.like_usuario_actual ? "mdi:heart" : "mdi:heart-outline"
-              }
-              className={`text-2xl md:text-3xl p-1 rounded-full ${
-                item?.like_usuario_actual
-                  ? "text-[#0091EA]"
-                  : "text-gray-400 hover:bg-[rgba(78,184,233,0.2)] cursor-pointer"
-              } `}
+              icon={item?.like_usuario_actual ? "mdi:heart" : "mdi:heart-outline"}
+              className="text-xl"
+            />
+            {item?.likes > 0 && <span className="text-sm font-medium">{item?.likes}</span>}
+          </button>
+          
+          <button 
+            onClick={() => {
+              setItemSelect(item)
+              setShowModal()
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-gray-400 hover:text-primary hover:bg-primary/10 transition-all"
+          >
+            <Icon icon="mdi:comment-outline" className="text-xl" />
+            {item?.comentarios_count > 0 && <span className="text-sm font-medium">{item?.comentarios_count}</span>}
+          </button>
+          
+          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-gray-400 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-500/10 transition-all">
+            <Icon icon="mdi:repeat-variant" className="text-xl" />
+          </button>
+          
+          <button 
+            onClick={() => mutateGuardar(item)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all ${
+              item?.guardado_usuario_actual
+                ? "text-amber-500 bg-amber-50 dark:bg-amber-500/10"
+                : "text-gray-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10"
+            }`}
+          >
+            <Icon 
+              icon={item?.guardado_usuario_actual ? "mdi:bookmark" : "mdi:bookmark-outline"} 
+              className="text-xl" 
             />
           </button>
-          <button className="flex items-center gap-2 cursor-pointer" onClick={() => {
-            setItemSelect(item)
-            setShowModal()
-          }}>
-            <Icon
-              icon={"mdi:comment-outline"}
-              className="text-3xl p-1 rounded-full text-gray-400 cursor-pointer"
-            />
-            <span className="text-xs md:text-sm text-gray-400">Comentar</span>
+          
+          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-gray-400 hover:text-primary hover:bg-primary/10 transition-all ml-auto">
+            <Icon icon="mdi:share-outline" className="text-xl" />
           </button>
-        </div>
-        <div className="flex gap-4 mt-1">
-          {item?.likes > 0 && <span className="text-xs text-gray-400">{item?.likes} me gusta</span>}
-          {
-            item?.comentarios_count > 0 && (<span onClick={() => {
-            setItemSelect(item)
-            setShowModal()
-          }} className="text-xs text-gray-400 cursor-pointer hover:underline">{item?.comentarios_count} comentarios</span>)
-          }
         </div>
       </div>
     </div>
