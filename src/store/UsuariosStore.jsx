@@ -79,4 +79,14 @@ export const useUsuariosStore = create((set) => ({
     }
     return count;
   },
+  mostrarUsuariosTodos: async () => {
+    const { data, error } = await supabase
+      .from(tabla)
+      .select("id, nombre, foto_perfil")
+      .limit(10);
+    if (error) {
+      throw new Error(error.message);
+    }
+    return data;
+  },
 }));

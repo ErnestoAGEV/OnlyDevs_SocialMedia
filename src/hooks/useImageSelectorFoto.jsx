@@ -3,13 +3,17 @@ import { useRef } from "react";
 import { toast } from "sonner";
 import imageCompression from "browser-image-compression";
 import { useGlobalStore } from "../store/GlobalStore";
+import { useUsuariosStore } from "../store/UsuariosStore";
 
 export const ImageSelectorFoto = () => {
-  const { setFile, setFileUrl,fileUrl } = useGlobalStore();
+  const { setFile, setFileUrl, fileUrl } = useGlobalStore();
+  const { dataUsuarioAuth } = useUsuariosStore();
   const fileInputRef = useRef(null);
+
   function openFileSelector() {
     fileInputRef.current.click();
   }
+
   const handleImageChange = async (e) => {
     const selectedFile = e.target.files[0];
     if (!selectedFile) return;
@@ -34,31 +38,34 @@ export const ImageSelectorFoto = () => {
       toast.error("Error al comprimir imagen: " + error.message);
     }
   };
+
+  // Determinar qué imagen mostrar: la seleccionada, la actual del usuario, o placeholder
+  const displayImage =
+    fileUrl !== "-"
+      ? fileUrl
+      : dataUsuarioAuth?.foto_perfil || "https://i.ibb.co/39y0kysq/subir.png";
+
   return (
-    <div className="text-center mb-5">
-      <div className="relative inline-block">
-        <img
-          src={
-            fileUrl !== "-" ? fileUrl : "https://i.ibb.co/39y0kysq/subir.png"
-          }
-          alt="imagen select"
-          className="w-20 h-20 rounded-lg object-cover transition-transform duration-300 hover:scale-105"
-        />
-        <button className="absolute top-2 left-14 w-7 h-7 bg-neutral-800 hover:bg-neutral-600 text-white rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer">
-          <Icon
-            icon="lets-icons:edit-fill"
-            className="text-[18px]"
-            onClick={openFileSelector}
-          />
-        </button>
-        <input
-          ref={fileInputRef}
-          accept="image/jpeg, image/png,/*"
-          type="file"
-          className="hidden"
-          onChange={handleImageChange}
-        />
+    <div
+      className="relative w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden cursor-pointer group border-4 border-white dark:border-neutral-900 shadow-lg"
+      onClick={openFileSelector}
+    >
+      <img
+        src={displayImage}
+        alt="Foto de perfil"
+        className="w-full h-full object-cover"
+      />
+      {/* Overlay con icono de cámara */}
+      <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+        <Icon icon="mdi:camera" className="text-3xl text-white" />
       </div>
+      <input
+        ref={fileInputRef}
+        accept="image/jpeg, image/png"
+        type="file"
+        className="hidden"
+        onChange={handleImageChange}
+      />
     </div>
   );
 };

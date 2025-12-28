@@ -14,29 +14,35 @@ export const useMostrarUsuariosAuthQuery = () => {
 };
 
 export const useEditarFotoUserMutate = () => {
-  const { file } = useGlobalStore();
+  const { file, setFile, setFileUrl } = useGlobalStore();
   const queryClient = useQueryClient();
   const { editarUsuarios, dataUsuarioAuth } = useUsuariosStore();
   return useMutation({
     mutationKey: ["editar foto user"],
     mutationFn: async (data) => {
-      if (file.size === undefined) {
-        return;
-      }
+      // Preparar objeto con todos los campos del perfil
       const p = {
-        nombre: data.nombre,
         id: dataUsuarioAuth?.id,
+        nombre: data.nombre,
+        bio: data.bio || null,
+        ubicacion: data.ubicacion || null,
+        sitio_web: data.sitio_web || null,
+        fecha_nacimiento: data.fecha_nacimiento || null,
       };
-      await editarUsuarios(p, dataUsuarioAuth?.foto_perfil, file);
+      
+      // Si hay archivo nuevo, pasarlo; si no, pasar "-" para que no intente subir
+      const archivoNuevo = file?.size !== undefined ? file : "-";
+      await editarUsuarios(p, dataUsuarioAuth?.foto_perfil, archivoNuevo);
     },
     onError: (error) => {
       toast.error("Error al editar usuario: " + error.message);
     },
     onSuccess: () => {
-      if (file.size === undefined) {
-        return toast.info("Selecciona una imagen");
-      }
-      toast.success("Datos guardados!");
+      toast.success("Perfil actualizado!");
+      // Limpiar el archivo seleccionado
+      setFile([]);
+      setFileUrl("-");
+      // Refrescar los datos del usuario
       queryClient.invalidateQueries(["mostrar user auth"]);
     },
   });
@@ -49,3 +55,11 @@ export const useContarUsuariosTodosQuery = () => {
     queryFn:contarUsuariosTodos,
   })
 }
+
+export const useMostrarUsuariosTodosQuery = () => {
+  const { mostrarUsuariosTodos } = useUsuariosStore();
+  return useQuery({
+    queryKey: ["mostrar usuarios todos"],
+    queryFn: mostrarUsuariosTodos,
+  });
+};

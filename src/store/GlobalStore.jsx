@@ -5,4 +5,6 @@ export const useGlobalStore = create ((set) => ({
     setFile: (p) => set({file:p}),
     fileUrl: "-",
     setFileUrl: (p) => set({fileUrl:p}),
+    stateFormPerfil: false,
+    setStateFormPerfil: () => set((state) => ({stateFormPerfil: !state.stateFormPerfil})),
 }))
