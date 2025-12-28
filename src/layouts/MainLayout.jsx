@@ -12,11 +12,11 @@ export const MainLayout = () => {
     }
   return (
     <main className="flex justify-center h-screen overflow-hidden bg-white dark:bg-bg-dark text-black dark:text-white transition-colors duration-300">
-      <section className="flex w-full max-w-[1300px] h-full">
-        <Sidebar />
-        <section className="flex-1 px-4 overflow-y-auto h-full">
+      <section className="flex flex-col md:flex-row w-full max-w-[1300px] h-full">
+        <section className="flex-1 px-2 md:px-4 overflow-y-auto h-full pb-20 md:pb-0">
           <Outlet />
         </section>
+        <Sidebar />
       </section>
     </main>
   );

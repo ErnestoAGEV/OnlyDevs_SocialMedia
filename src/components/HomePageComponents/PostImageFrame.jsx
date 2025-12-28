@@ -6,12 +6,12 @@ export const PostImageFrame = ({ src }) => {
   const bgColor = useImageExtractColor(imgRef,src);
 
   return (
-    <div className="rounded-lg overflow-hidden flex items-center justify-center max-h-[500px]" style={{backgroundColor:bgColor}}>
+    <div className="rounded-lg overflow-hidden flex items-center justify-center max-h-[300px] md:max-h-[500px]" style={{backgroundColor:bgColor}}>
       <img ref={imgRef}
         src={src}
         alt="alterno"
         crossOrigin="anonymous"
-        className="object-contain max-h-[500px]"
+        className="object-contain max-h-[300px] md:max-h-[500px] w-full"
       />
     </div>
   );

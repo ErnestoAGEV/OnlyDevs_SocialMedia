@@ -8,22 +8,32 @@ export const useInsertarPostMutate = () => {
   const { insertarPost, file, setStateForm, setFile } = usePostStore();
   const fechaActual = useFormattedDate();
   const { dataUsuarioAuth } = useUsuariosStore();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ["insertar post"],
     mutationFn: async (data) => {
       let type = "imagen";
-      if (file && file.name) {
+      let url = "-";
+      
+      // Si hay un GIF seleccionado, usarlo directamente
+      if (data.gifUrl) {
+        type = "gif";
+        url = data.gifUrl;
+      } else if (file && file.name) {
         const ext = file.name.split(".").pop()?.toLowerCase();
         if (ext === "mp4") type = "video";
       }
+      
       const p = {
         descripcion: data.descripcion,
-        url: "-",
+        url: url,
         fecha: fechaActual,
         id_usuario: dataUsuarioAuth?.id,
         type: type,
       };
-      await insertarPost(p, file);
+      
+      // Si es un GIF, no subimos archivo, solo guardamos la URL
+      await insertarPost(p, data.gifUrl ? null : file);
     },
     onError: (error) => {
       toast.error("Error al insertar post: " + error.message);
@@ -32,6 +42,8 @@ export const useInsertarPostMutate = () => {
       toast.success("Publicado");
       setStateForm();
       setFile(null);
+      // Invalidar queries para refrescar los posts inmediatamente
+      queryClient.invalidateQueries({ queryKey: ["mostrar post"], exact: false });
     },
   });
 };

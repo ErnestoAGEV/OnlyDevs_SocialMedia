@@ -15,19 +15,19 @@ export const ComentarioCard = ({ item }) => {
     useComentariosStore();
 
   return (
-    <div className="pl-4">
+    <div className="pl-2 md:pl-4">
       <div className="flex items-start gap-2 group relative w-full">
         <img
           src={item?.foto_usuario}
-          className="w-9 h-9 rounded-full object-cover"
+          className="w-8 h-8 md:w-9 md:h-9 rounded-full object-cover flex-shrink-0"
         />
-        <div className="flex-1 relative">
-          <div className="relative bg-gray-100 dark:bg-neutral-800 p-2 rounded-xl text-sm w-fit max-w-[90%] flex gap-2">
+        <div className="flex-1 min-w-0 relative">
+          <div className="relative bg-gray-100 dark:bg-neutral-800 p-2 rounded-xl text-xs md:text-sm w-fit max-w-[95%] md:max-w-[90%] flex gap-2">
             <section>
-              <span className="font-semibold block text-xs">
+              <span className="font-semibold block text-[10px] md:text-xs">
                 {item?.nombre_usuario}
               </span>
-              <p>{item?.comentario}</p>
+              <p className="break-words">{item?.comentario}</p>
             </section>
           </div>
           <div className="flex gap-3 mt-1 text-xs text-gray-500 ml-2 relative">

@@ -59,7 +59,7 @@ export const PostVideoFrame = ({ src }) => {
   return (
     <div
       ref={containterRef}
-      className="rounded-lg overflow-hidden flex items-center justify-center max-h-[500px]"
+      className="rounded-lg overflow-hidden flex items-center justify-center max-h-[300px] md:max-h-[500px]"
       style={{ backgroundColor: bgColor }}
     >
       <video
@@ -69,7 +69,7 @@ export const PostVideoFrame = ({ src }) => {
         controls
         alt="alterno"
         crossOrigin="anonymous"
-        className="object-contain max-h-[500px] w-full"
+        className="object-contain max-h-[300px] md:max-h-[500px] w-full"
       />
     </div>
   );

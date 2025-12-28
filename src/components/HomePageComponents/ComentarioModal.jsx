@@ -54,10 +54,10 @@ export const ComentarioModal = () => {
   }, []);
 
   return (
-    <main className="fixed inset-0 z-100 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <section className="bg-white dark:bg-neutral-900 rounded-xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-xl flex flex-col relative">
-        <header className="h-25 sticky p-4 border-b border-gray-400/20">
-          <div className="flex items-center gap-3 text-black dark:text-white">
+    <main className="fixed inset-0 z-100 bg-black/50 backdrop-blur-sm flex items-end md:items-center justify-center md:p-4">
+      <section className="bg-white dark:bg-neutral-900 rounded-t-2xl md:rounded-xl w-full md:max-w-2xl h-[90vh] md:max-h-[90vh] overflow-hidden shadow-xl flex flex-col relative">
+        <header className="sticky top-0 p-3 md:p-4 border-b border-gray-400/20 bg-white dark:bg-neutral-900">
+          <div className="flex items-center gap-2 md:gap-3 text-black dark:text-white">
             <img
               src={item?.foto_usuario}
               className="w-12 h-12 rounded-full object-cover"
