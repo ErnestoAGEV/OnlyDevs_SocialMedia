@@ -42,6 +42,7 @@ export const Sidebar = () => {
       to: "/mi-perfil",
     },
   ];
+  
   return (
     <div className="h-screen p-2 bg-white dark:bg-bg-dark transition-all duration-300 flex flex-col">
       {/*LOGO*/}
@@ -69,7 +70,7 @@ export const Sidebar = () => {
       </nav>
       <BtnToggleTheme/>
       <BtnLogout />
-      <BtnNewPost/>
+      <BtnNewPost />
     </div>
   );
 };

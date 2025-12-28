@@ -73,6 +73,13 @@ export const HomePage = () => {
     queryKey: ["mostrar respuesta comentarios"],
   });
 
+  // Subscription for comments to update counts
+  useSupabaseSuscription({
+    channelName: "public:usuarios",
+    options: { event: "*", schema: "public", table: "usuarios" },
+    queryKey: ["contar usuarios todos"],
+  });
+
   return (
     <main className="flex min-h-screen bg-white dark:bg-bg-dark max-w-[1200px] mx-auto ">
 {
